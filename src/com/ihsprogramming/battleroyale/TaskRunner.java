@@ -1,4 +1,4 @@
-package com.althoumb.battleroyale;
+package com.ihsprogramming.battleroyale;
 
 import java.util.Collection;
 import java.util.Random;
@@ -75,7 +75,7 @@ public class TaskRunner extends BukkitRunnable implements Listener {
     	
     	health = board.registerNewObjective("Health", Criterias.HEALTH);
     	health.setDisplaySlot(DisplaySlot.BELOW_NAME);
-    	health.setDisplayName(ChatColor.RED + "‚ù§");
+    	health.setDisplayName(ChatColor.RED + "‚?§");
     	
     	Bukkit.getServer().getWorld("world").setSpawnLocation((minX+maxX)/2, 60, (minZ+maxZ)/2);
         Collection<? extends Player> list = (Bukkit.getOnlinePlayers());

@@ -1,4 +1,4 @@
-package com.althoumb.battleroyale;
+package com.ihsprogramming.battleroyale;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

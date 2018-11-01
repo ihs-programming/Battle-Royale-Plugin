@@ -1,4 +1,4 @@
-package com.althoumb.battleroyale;
+package com.ihsprogramming.battleroyale;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,9 +1,16 @@
-package com.althoumb.battleroyale;
+package com.ihsprogramming.battleroyale;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class StartEvent extends Event {
+public class SpawnEvent extends Event {
+	
+	private final Player player;
+	
+    public SpawnEvent(Player player) {
+        this.player = player;
+    }
     
 	private static final HandlerList HANDLERS = new HandlerList();
 
@@ -15,4 +22,8 @@ public class StartEvent extends Event {
         return HANDLERS;
     }
     
+    public Player getPlayer() {
+        return this.player;
+    }
+
 }
