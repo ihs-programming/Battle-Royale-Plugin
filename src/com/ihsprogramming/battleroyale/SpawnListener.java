@@ -25,37 +25,45 @@ import org.bukkit.scoreboard.Score;
 
 public class SpawnListener implements Listener {
 	
+	/*
+	 * This code handles player death.
+	 */
 	@EventHandler
     public void onDamage(EntityDamageEvent event) {
-		if(event.getEntity() instanceof Player){
+		if(event.getEntity() instanceof Player){ // check to see if damaged entity is a player
 	        Player player = (Player) event.getEntity();
-	        if(player.getHealth() - event.getDamage() <= 0) {
+	        if(player.getHealth() - event.getDamage() <= 0) {  // detects if damage would kill player
 	        	if (event instanceof EntityDamageByEntityEvent){
+	        		// if player was shot by an arrow, use the entity who shot that arrow for scoring purposes
 	        		if(event.getCause() == DamageCause.PROJECTILE) {
 	        		    Arrow a = (Arrow) ((EntityDamageByEntityEvent) event).getDamager();
-	        		    if (a.getShooter() instanceof Entity) {
+	        		    if (a.getShooter() instanceof Entity) { // check if arrow shooter was entity (consider that arrows can be shot by dispensers or summoned using commands)
 	        		    	Bukkit.getServer().broadcastMessage(ChatColor.GOLD + player.getDisplayName() + ChatColor.RED + " was eliminated by " + ChatColor.GOLD + ((Entity) a.getShooter()).getName());
+	        		    	// if a player shot the arrow, increase their score by one
 	        		    	if (a.getShooter() instanceof Player) {
 	    	    				Score kills = TaskRunner.kills.getScore(((Player) a.getShooter()).getName());
 	    	    				kills.setScore(kills.getScore() + 1);
 	    	    			}
 	        		    } else {
-	    	    			Bukkit.getServer().broadcastMessage(ChatColor.GOLD + player.getDisplayName() + ChatColor.RED + " was eliminated by " + ChatColor.GOLD + event.getCause().toString().toLowerCase().replaceAll("_", " "));
+	    	    			Bukkit.getServer().broadcastMessage(ChatColor.GOLD + player.getDisplayName() + ChatColor.RED + " was eliminated by " + ChatColor.GOLD + event.getCause().toString().toLowerCase().replaceAll("_", " ")); // use generic death message
 	    	    		}
 	        		} else {
+	        			// if player was killed by an entity that isn't an arrow, use the entity's name for death message
 	        			Bukkit.getServer().broadcastMessage(ChatColor.GOLD + player.getDisplayName() + ChatColor.RED + " was eliminated by " + ChatColor.GOLD + ((EntityDamageByEntityEvent) event).getDamager().getName());
-	        			if (((EntityDamageByEntityEvent) event).getDamager() instanceof Player) {
+	        			// if player was killed in PvP combat, get and increase the killer's score
+	        			if (((EntityDamageByEntityEvent) event).getDamager() instanceof Player) { // check if damager was player
 		    				Score kills = TaskRunner.kills.getScore(((EntityDamageByEntityEvent) event).getDamager().getName());
 		    				kills.setScore(kills.getScore() + 1);
 		    			}
 	        		}	    			
 	    		} else {
-	    			Bukkit.getServer().broadcastMessage(ChatColor.GOLD + player.getDisplayName() + ChatColor.RED + " was eliminated by " + ChatColor.GOLD + event.getCause().toString().toLowerCase().replaceAll("_", " "));
+	    			Bukkit.getServer().broadcastMessage(ChatColor.GOLD + player.getDisplayName() + ChatColor.RED + " was eliminated by " + ChatColor.GOLD + event.getCause().toString().toLowerCase().replaceAll("_", " ")); // use generic death message
 	    		}
-	            event.setCancelled(true);
+	            event.setCancelled(true); // cancel damage event, to prevent death
 	            try {
+	            	// drop the contents of the player's inventory upon death
 		            for (ItemStack itemStack : player.getInventory().getContents()) {
-		            	if (!itemStack.isSimilar(compass())) {
+		            	if (!itemStack.isSimilar(compass())) { // don't drop the storm compass
 		            		player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
 		            	}
 		            }
@@ -65,15 +73,20 @@ public class SpawnListener implements Listener {
 	            } catch (Exception e) {
 	            	
 	            }
-	    		player.setGameMode(GameMode.SPECTATOR);
+	    		player.setGameMode(GameMode.SPECTATOR); // changes the player's gamemode to spectator
 	        }
 		}
 	}
 	
+	/*
+	 * handles player spawning
+	 */
 	@EventHandler
 	public void onSpawn(SpawnEvent event)
     {	
 		Player player = event.getPlayer();
+		
+		// reset the player to defaults
 		player.getInventory().clear();
 		player.setGameMode(GameMode.SURVIVAL);
 		player.setScoreboard(TaskRunner.board);
@@ -93,6 +106,8 @@ public class SpawnListener implements Listener {
 		int maxZ = TaskRunner.maxZ;
 		int minZ = TaskRunner.minZ;
 		boolean teleported = false;
+		
+		// teleport player to a random safe location
 		while(!teleported) {
 			Random Xrand = new Random();
 			x = Xrand.nextInt(maxX - minX) + minX;
@@ -106,7 +121,7 @@ public class SpawnListener implements Listener {
 			loc.setY(loc.getWorld().getHighestBlockYAt(loc));
 			
 			if (!checkLocation(player, loc)) {
-				player.sendMessage(ChatColor.GOLD + "Couldn't find a safe place to teleport you! Trying again!");
+				
 			} else {
 				player.teleport(loc);
 				player.sendMessage(ChatColor.DARK_AQUA + "Teleported to: X: " + ChatColor.GOLD + x + ChatColor.DARK_AQUA + " Z: " + ChatColor.GOLD + z);
@@ -118,7 +133,10 @@ public class SpawnListener implements Listener {
         playerinventory.addItem(compass());
         
     }
-		
+	
+	/*
+	 * checks if location is safe for spawning
+	 */
 	public static boolean checkLocation(Player player, Location loc)
 	{
 		if (loc.getBlock().getType() != Material.AIR && loc.getBlock().getType() != null) {
@@ -127,6 +145,9 @@ public class SpawnListener implements Listener {
 		return true;
 	}
 	
+	/*
+	 * creates a storm compass
+	 */
 	public ItemStack compass(){
 		ItemStack is;
 		ItemMeta im;

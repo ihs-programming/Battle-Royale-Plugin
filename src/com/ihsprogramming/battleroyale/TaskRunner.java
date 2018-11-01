@@ -45,14 +45,18 @@ public class TaskRunner extends BukkitRunnable implements Listener {
         this.plugin = plugin;
     }
 
+    /*
+     * waits for players to join
+     */
 	@EventHandler
 	public void onStart(StartEvent event)
 	{	
+		// repeatedly check if enough players have joined
 		BukkitScheduler scheduler = plugin.getServer().getScheduler();
         ID = scheduler.scheduleSyncRepeatingTask(plugin, new Runnable() {        	
             @Override
             public void run() {
-            	if (plugin.getServer().getOnlinePlayers().size() >= MIN_PLAYERS) {
+            	if (plugin.getServer().getOnlinePlayers().size() >= MIN_PLAYERS) { // if enough players have connected, start the game
             		Bukkit.getScheduler().cancelTask(ID);
             		new TaskRunner(plugin).runTask(plugin);
             	}
@@ -64,9 +68,10 @@ public class TaskRunner extends BukkitRunnable implements Listener {
 	
     @Override
     public void run() {
-        // What you want to schedule goes here
+        // set time to day
     	Bukkit.getWorld("world").setTime(1000);
     	
+    	// handle scoreboard stuff
     	board = Bukkit.getServer().getScoreboardManager().getNewScoreboard();
     	
     	kills = board.registerNewObjective("Kills", Criterias.PLAYER_KILLS);
@@ -75,14 +80,17 @@ public class TaskRunner extends BukkitRunnable implements Listener {
     	
     	health = board.registerNewObjective("Health", Criterias.HEALTH);
     	health.setDisplaySlot(DisplaySlot.BELOW_NAME);
-    	health.setDisplayName(ChatColor.RED + "â?¤");
+    	health.setDisplayName(ChatColor.RED + "ï¿½?ï¿½");
     	
+    	// spawn all the players
     	Bukkit.getServer().getWorld("world").setSpawnLocation((minX+maxX)/2, 60, (minZ+maxZ)/2);
         Collection<? extends Player> list = (Bukkit.getOnlinePlayers());
 		for(Player player:list) {
 			SpawnEvent spawnevent = new SpawnEvent(player);
 			Bukkit.getPluginManager().callEvent(spawnevent);
 		}
+		
+		// create and shrink the storm
 		WorldBorder worldborder = Bukkit.getServer().getWorld("world").getWorldBorder();
 		sidelength = ((maxX-minX) > (maxZ-minZ)) ? maxX-minX : maxZ-minZ;
 		worldborder.setSize(sidelength);
