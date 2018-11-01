@@ -1,0 +1,10 @@
+name: MinecraftBattleRoyale
+main: com.althoumb.battleroyale.BattleRoyale
+version: 0.0
+api-version: 1.13
+commands:
+   startgame:
+      description: Starts a new battle royale.
+      usage: /<command>
+      permission: <plugin name>.startgame
+      permission-message: You don't have <permission>
