@@ -26,6 +26,8 @@ public class TaskRunner extends BukkitRunnable implements Listener {
     private static final int SHRINK_TIME = 180;
     private static final int SHRINK_PERIOD = 200;
     
+    public static boolean playeroverride = true;
+    
 	int ID = 0;
 	
 	public static int minX = -100;
@@ -56,7 +58,7 @@ public class TaskRunner extends BukkitRunnable implements Listener {
         ID = scheduler.scheduleSyncRepeatingTask(plugin, new Runnable() {        	
             @Override
             public void run() {
-            	if (plugin.getServer().getOnlinePlayers().size() >= MIN_PLAYERS) { // if enough players have connected, start the game
+            	if ((plugin.getServer().getOnlinePlayers().size() >= MIN_PLAYERS)||(playeroverride)) { // if enough players have connected, start the game
             		Bukkit.getScheduler().cancelTask(ID);
             		new TaskRunner(plugin).runTask(plugin);
             	}

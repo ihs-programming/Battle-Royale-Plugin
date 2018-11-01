@@ -73,6 +73,7 @@ public class SpawnListener implements Listener {
 	            } catch (Exception e) {
 	            	
 	            }
+	            player.getWorld().strikeLightningEffect(player.getLocation()); // create some lightning
 	    		player.setGameMode(GameMode.SPECTATOR); // changes the player's gamemode to spectator
 	        }
 		}

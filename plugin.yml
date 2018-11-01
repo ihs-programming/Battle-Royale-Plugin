@@ -1,5 +1,5 @@
 name: MinecraftBattleRoyale
-main: com.althoumb.battleroyale.BattleRoyale
+main: com.ihsprogramming.battleroyale.BattleRoyale
 version: 0.0
 api-version: 1.13
 commands:
